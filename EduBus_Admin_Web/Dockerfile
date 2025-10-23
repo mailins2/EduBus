@@ -18,4 +18,5 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 
 # Lệnh khởi động container
-CMD service nginx start && php-fpm
+CMD ["php-fpm", "-F"]
+
