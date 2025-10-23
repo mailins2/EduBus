@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y nginx zip unzip git libzip-dev \
 
 # Sao chép mã nguồn vào container
 WORKDIR /var/www/html
-COPY . .
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 # Cấp quyền ghi cho storage
 RUN chmod -R 777 storage bootstrap/cache
