@@ -24,8 +24,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Cài đặt dependencies (bỏ qua nếu đã có vendor/)
 RUN composer install --no-interaction --no-dev --optimize-autoloader || true
 
-# Xoá default site của nginx (nếu có)
-RUN rm -f /etc/nginx/sites-enabled/default || true
+# Xoá default cấu hình nginx để tránh "Welcome to nginx"
+RUN rm -f /etc/nginx/sites-enabled/default /etc/nginx/conf.d/default.conf || true
+
 
 # Expose port 80 cho Render
 EXPOSE 80
