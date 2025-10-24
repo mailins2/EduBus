@@ -9,6 +9,9 @@ WORKDIR /var/www/html
 # Copy toàn bộ mã nguồn Laravel
 COPY . .
 
+# Tạo database SQLite nếu chưa có
+RUN mkdir -p /var/www/html/database && touch /var/www/html/database/database.sqlite
+
 RUN chmod -R 777 storage bootstrap/cache
 
 # Copy file cấu hình nginx
