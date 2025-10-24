@@ -12,6 +12,8 @@ WORKDIR /var/www/html
 # Copy toàn bộ mã nguồn vào container
 COPY . .
 
+RUN ls -la /var/www/html && ls -la /var/www/html/public
+
 # Cấp quyền ghi cho Laravel
 RUN chmod -R 777 storage bootstrap/cache
 
