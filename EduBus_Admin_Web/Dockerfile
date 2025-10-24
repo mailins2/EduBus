@@ -18,12 +18,15 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-interaction --no-dev --optimize-autoloader || true
 
-# Xoá site mặc định của nginx
-RUN rm -f /etc/nginx/sites-enabled/default /etc/nginx/conf.d/default.conf.default || true
+# Xóa toàn bộ config mặc định của Nginx
+RUN rm -f /etc/nginx/conf.d/default.conf /etc/nginx/sites-enabled/default || true
 
-# Debug kiểm tra nội dung public/
-RUN ls -la /var/www/html && ls -la /var/www/html/public
+# Copy file cấu hình nginx của bạn
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
+# Expose port 80
 EXPOSE 80
 
-CMD ["sh", "-c", "service nginx start && php-fpm -F"]
+# Khởi động cả Nginx và PHP-FPM
+CMD ["sh", "-c", "nginx -g 'daemon off;' & php-fpm -F"]
+
