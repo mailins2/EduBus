@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/customizer.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/rtl.min.css') }}">
 
+
       
       <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -270,7 +271,7 @@
 <script src="{{ asset('assets/js/plugins/form-wizard.js') }}"></script>
 <script src="{{ asset('assets/vendor/aos/dist/aos.js') }}"></script>
 <script src="{{ asset('assets/js/hope-ui.js') }}" defer></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
   </body>
 </html>

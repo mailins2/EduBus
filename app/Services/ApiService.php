@@ -180,4 +180,85 @@ class ApiService
             'data' => $response->json(),
         ];
     }
+    public function getBusDetail($id)
+    {
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json',
+        ])->get($this->baseUrl . '/xe/' . $id);
+
+        // Nếu request thất bại (API lỗi, 401, 500, ...)
+        if (!$response->successful()) {
+            return [
+                'error' => true,
+                'message' => 'Không thể kết nối API. Mã lỗi: ' . $response->status(),
+            ];
+        }
+
+        return $response->json();
+    }
+    public function addStudentsToBus($xeId, array $hocSinhIds)
+    {
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->token,
+                'Accept' => 'application/json', // nếu API yêu cầu
+            ])->post($this->baseUrl . "/xe/{$xeId}/add-hocsinh", [
+                'hocSinhIds' => $hocSinhIds, // gửi mảng nhiều ID
+            ]);
+
+            return $response->json();
+        } catch (\Exception $e) {
+            return [
+                'error' => true,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+    public function removeStudentFromBus($xeId, $hocSinhId)
+    {
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->token,
+                'Accept' => 'application/json',
+            ])->delete("{$this->baseUrl}/xe/{$xeId}/remove-hocsinh/{$hocSinhId}");
+
+            if ($response->failed()) {
+                return [
+                    'error' => true,
+                    'message' => 'Không thể xoá học sinh khỏi xe. Mã lỗi: ' . $response->status(),
+                    'data' => $response->json(),
+                ];
+            }
+
+            $data = $response->json();
+
+            return [
+                'error' => false,
+                'message' => $data['message'] ?? 'Xoá học sinh khỏi xe thành công',
+                'xe' => $data['xe'] ?? null,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'error' => true,
+                'message' => 'Lỗi khi gọi API: ' . $e->getMessage(),
+            ];
+        }
+    }
+    public function createBus($data)
+    {
+        $token = session('access_token');
+        $response = Http::withToken($token)
+            ->post($this->baseUrl . '/xe', $data);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return [
+            'error' => true,
+            'message' => $response->json()['message'] ?? 'Không thể thêm xe mới',
+        ];
+    }
+
 }

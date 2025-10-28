@@ -55,7 +55,17 @@ Route::middleware([AuthSessionMiddleware::class])->group(function () {
             Route::put('/update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'destroy')->name('delete');
         });
-    
-    Route::get('/bus-list', [BusController::class, 'index'])->name('busline.bus-list');
+        // ---------------- BUS ----------------
+    Route::controller(BusController::class)
+        ->prefix('/bus-list')
+        ->name('bus-list.')
+        ->group(function () {
+            Route::get('/', 'index')->name('');
+            Route::get('/add-bus', 'add')->name('add-bus');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/detail/{id}','detail')->name('detail');
+            Route::post('/{xeId}/add-students', 'addStudents')->name('addStudents');
+            Route::delete('/{xeId}/remove-student/{studentId}','removeStudent')->name('bus-list.remove-student');
+        });
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

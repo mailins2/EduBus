@@ -10,6 +10,9 @@
                <div class="header-title">
                   <h4 class="card-title">Danh sách xe</h4>
                </div>
+               <a class="btn" role ="button" style="color:#3a57e8" href="/bus-list/add-bus">
+                  <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">                                <path opacity="0.4" d="M16.6667 2H7.33333C3.92889 2 2 3.92889 2 7.33333V16.6667C2 20.0622 3.92 22 7.33333 22H16.6667C20.0711 22 22 20.0622 22 16.6667V7.33333C22 3.92889 20.0711 2 16.6667 2Z" fill="currentColor"></path>                                <path d="M15.3205 12.7083H12.7495V15.257C12.7495 15.6673 12.4139 16 12 16C11.5861 16 11.2505 15.6673 11.2505 15.257V12.7083H8.67955C8.29342 12.6687 8 12.3461 8 11.9613C8 11.5765 8.29342 11.2539 8.67955 11.2143H11.2424V8.67365C11.2824 8.29088 11.6078 8 11.996 8C12.3842 8 12.7095 8.29088 12.7495 8.67365V11.2143H15.3205C15.7066 11.2539 16 11.5765 16 11.9613C16 12.3461 15.7066 12.6687 15.3205 12.7083Z" fill="currentColor"></path>                                </svg>                            
+               </a>
             </div>
             <div class="card-body px-0">
                <div class="table-responsive">
@@ -29,21 +32,17 @@
                            <th>Sức chứa</th>
                            <th>Tuyến đường</th>
                            <th>Tài xế</th>
-                           <th>Giờ chạy sáng</th>
-                           <th>Giờ chạy chiều</th>
                            <th style="min-width: 100px">Chỉnh sửa</th>
                         </tr>
                      </thead>
                      <tbody>
                         @foreach($buses['dsXe'] as $index => $bus)
-                        <tr>
+                        <tr onclick="window.location='{{ route('bus-list.detail', $bus['_id']) }}'" style="cursor:pointer;">
                            <td class="text-center">{{$index +1}}</td>
                            <td>{{ $bus['bienso'] ?? 'chưa có'}}</td>
-                           <td>{{ $bus['suc_chua'] ?? 'chưa có'}}</td>
+                           <td>{{ count($bus['hoc_sinh_ids']) ?? 'chưa có'}}/{{ $bus['suc_chua'] ?? 'chưa có'}}</td>
                            <td>{{ $bus['tuyen'] ?? 'chưa có'}}</td>
                            <td>{{ $bus['taixe_id']['profile']['hoten'] ?? 'chưa có'}}</td>
-                           <td>{{ $bus['lich_trinh'][0]['giobatdau_sang'] ?? 'chưa có'}} - {{ $bus['lich_trinh'][0]['gioketthuc_sang'] ?? 'chưa có'}}</td>
-                           <td>{{ $bus['lich_trinh'][0]['giobatdau_chieu'] ?? 'chưa có'}} - {{ $bus['lich_trinh'][0]['gioketthuc_chieu'] ?? 'chưa có'}}</td>
                            <td>
                               <div class="flex align-items-center list-user-action">
                                  <a class="btn btn-sm btn-icon btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit" href="#">
