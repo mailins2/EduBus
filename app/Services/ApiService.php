@@ -260,5 +260,45 @@ class ApiService
             'message' => $response->json()['message'] ?? 'Không thể thêm xe mới',
         ];
     }
+    // App/Services/ApiService.php
 
+    public function deleteBus($id)
+    {
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . session('access_token'),
+                'Accept' => 'application/json',
+            ])->delete($this->baseUrl . '/xe/' . $id);
+
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'message' => $response->json('message') ?? 'Xóa xe thành công'
+                ];
+            }
+
+            return [
+                'success' => false,
+                'message' => $response->json('message') ?? 'Không thể xóa xe'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Lỗi hệ thống: ' . $e->getMessage()
+            ];
+        }
+    }
+    public function updateBus($id, $body)
+    {
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json',
+        ])->put("{$this->baseUrl}/xe/{$id}", $body);
+
+        return [
+            'status' => $response->status(),
+            'ok' => $response->successful(),
+            'data' => $response->json(),
+        ];
+    }
 }

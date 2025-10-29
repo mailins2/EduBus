@@ -109,6 +109,85 @@ class BusController extends Controller{
             ], 500);
         }
     }
+    public function destroy($id)
+    {
+        $result = $this->apiService->deleteBus($id);
 
+        return response()->json([
+            'success' => $result['success'],
+            'message' => $result['message']
+        ]);
+    }
+    public function delete($id, ApiService $api)
+    {
+        try {
+            // Gọi API xóa xe
+            $result = $api->deleteBus($id);
+
+            if (isset($result['message']) && str_contains($result['message'], 'thành công')) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Xóa xe thành công!',
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $result['message'] ?? 'Không thể xóa xe!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi hệ thống: ' . $e->getMessage(),
+            ]);
+        }
+    }
+    public function adjust($id,ApiService $api){
+        $bus = $api->getBusDetail($id);
+        $allDrivers = $api->getDrivers();
+
+        // Nếu API lỗi, set rỗng
+        $drivers = [];
+        if (!$allDrivers['error'] && !empty($allDrivers['users'])) {
+            // Lọc những tài xế chưa có xe (tai_xe_info.bienso không tồn tại)
+            $drivers = array_filter($allDrivers['users'], function($driver) {
+                return !isset($driver['tai_xe_info']['xe_id']);
+            });
+        }
+        return view('busline.adjust-bus',compact('bus','drivers'));
+    }
+    public function update($id, Request $request, ApiService $api)
+    {
+        $validated = $request->validate([
+            'bienso' => 'required|string',
+            'tuyen' => 'required|string',
+            'taixe_id' => 'required|string',
+        ]);
+
+        $body = [
+            'bienso' => $validated['bienso'],
+            'tuyen' => $validated['tuyen'],
+            'taixe_id' => $validated['taixe_id'],
+        ];
+
+        try {
+            $response = $api->updateBus($id, $body);
+
+            if (isset($response['ok']) && $response['ok'] === true) {
+                // ✅ Lưu thông báo thành công
+                return back()->with('success', $response['data']['message'] ?? 'Cập nhật xe thành công!');
+            }
+
+            $errorMessage = $response['data']['message']
+                ?? $response['message']
+                ?? $response['error']
+                ?? 'Không thể cập nhật xe.';
+
+            return back()->withErrors(['error' => $errorMessage]);
+
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Lỗi API: ' . $e->getMessage()]);
+        }
+    }
 
 }

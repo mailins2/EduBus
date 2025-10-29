@@ -45,7 +45,12 @@
                            <td>{{ $bus['taixe_id']['profile']['hoten'] ?? 'chưa có'}}</td>
                            <td>
                               <div class="flex align-items-center list-user-action">
-                                 <a class="btn btn-sm btn-icon btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit" href="#">
+                                 <a class="btn btn-sm btn-icon btn-warning"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="Edit"
+                                    href="{{ route('bus-list.adjust', $bus['_id']) }}"
+                                    onclick="event.stopPropagation()">
                                     <span class="btn-inner">
                                        <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                           <path d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -54,15 +59,20 @@
                                        </svg>
                                     </span>
                                  </a>
-                                 <a class="btn btn-sm btn-icon btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"  href="#">
+                                 <a class="btn btn-sm btn-icon btn-danger"
+                                    href="javascript:void(0);"
+                                    title="Delete"
+                                    onclick="event.stopPropagation(); confirmDelete('{{ $bus['_id'] }}')">
                                     <span class="btn-inner">
-                                       <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                                       <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" 
+                                          xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
                                           <path d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                           <path d="M20.708 6.23975H3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                           <path d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                        </svg>
                                     </span>
                                  </a>
+
                               </div>
                            </td>
                         </tr>
@@ -76,4 +86,64 @@
       </div>
    </div>
 </div>
+<!-- Modal Xác nhận -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Xác nhận xóa xe</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có chắc chắn muốn xóa xe này không?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    let deleteBusId = null;
+
+    function confirmDelete(id) {
+        deleteBusId = id;
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        if (!deleteBusId) return;
+
+        fetch(`/bus-list/delete/${deleteBusId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+            modal.hide();
+
+            Swal.fire({
+                icon: data.success ? 'success' : 'error',
+                title: data.message,
+                confirmButtonText: 'OK'
+            }).then(() => {
+                if (data.success) window.location.reload();
+            });
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể kết nối đến máy chủ.'
+            });
+        });
+    });
+</script>
+
 @endsection

@@ -66,6 +66,9 @@ Route::middleware([AuthSessionMiddleware::class])->group(function () {
             Route::get('/detail/{id}','detail')->name('detail');
             Route::post('/{xeId}/add-students', 'addStudents')->name('addStudents');
             Route::delete('/{xeId}/remove-student/{studentId}','removeStudent')->name('bus-list.remove-student');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::get('/adjust/{id}','adjust')->name('adjust');
+            Route::put('/update/{id}', 'update')->name('update');
         });
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
