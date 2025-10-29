@@ -26,7 +26,7 @@ class BusController extends Controller{
         if (!$allDrivers['error'] && !empty($allDrivers['users'])) {
             // Lọc những tài xế chưa có xe (tai_xe_info.bienso không tồn tại)
             $drivers = array_filter($allDrivers['users'], function($driver) {
-                return !isset($driver['tai_xe_info']['bienso']);
+                return !isset($driver['tai_xe_info']['xe_id']);
             });
         }
 

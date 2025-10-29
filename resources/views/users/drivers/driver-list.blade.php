@@ -41,8 +41,8 @@
                            <td class="text-center">{{$index +1}}</td>
                            <td>{{ $user['profile']['hoten'] ?? 'chưa có'}}</td>
                            <td>{{ $user['profile']['sdt'] ?? 'chưa có'}}</td>
-                           <td>{{ $user['tai_xe_info']['bienso'] ?? 'chưa có'}}</td>
-                           <td>{{ $user['tai_xe_info']['tuyen'] ?? 'chưa có'}}</td>
+                           <td>{{ $user['tai_xe_info']['xe_id']['bienso'] ?? 'chưa có'}}</td>
+                           <td>{{ $user['tai_xe_info']['xe_id']['tuyen'] ?? 'chưa có'}}</td>
                            <td>
                               <div class="flex align-items-center list-user-action">
                                  <a class="btn btn-sm btn-icon btn-warning"

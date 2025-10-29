@@ -71,7 +71,7 @@ class StudentController extends Controller
                     'sdt' => $validated['phu_huynh_sdt'],
                     'quanhe' => $validated['quanhe'],
                 ],
-                'diadiem_don_tra' => $validated['diadiem_don_tra'] ?? 'Chưa cập nhật',
+                'diadiem_don_tra' => $fullAddress,
                 'state' => 'done',
                 'state_time' => now()->toISOString(),
             ],
