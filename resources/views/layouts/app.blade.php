@@ -122,19 +122,6 @@
                                     <span class="item-name">Tài xế</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link " href="../dashboard/app/user-add.html">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> A </i>
-                                    <span class="item-name">Yêu cầu từ người dùng</span>
-                                </a>
-                            </li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -145,7 +132,7 @@
                                     <ellipse opacity="0.4" cx="12" cy="21" rx="5" ry="1" fill="currentColor"></ellipse>
                                 </svg>
                             </i>
-                            <span class="item-name">Xe và tuyến đường</span>
+                            <span class="item-name">Quản lý xe</span>
                             <i class="right-icon">
                                 <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
