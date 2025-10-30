@@ -5,6 +5,9 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\URL;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -32,9 +35,10 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('admin', $admin);
             }
         }
-        if (config('app.env') === 'production' && Request::server('HTTP_X_FORWARDED_PROTO') === 'https') {
+        if (config('app.env') === 'production' && Request::server('HTTP_X_FORWARDED_PROTO') === 'http') {
             URL::forceScheme('https');
         }
+
     });
     }
 }
