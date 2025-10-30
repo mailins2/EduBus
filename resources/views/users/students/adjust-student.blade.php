@@ -143,7 +143,7 @@
                         <div class="form-group col-md-6">
                            <label class="form-label" for="email">Email:</label>
                            <input type="email" class="form-control" id="email" name="email"
-                                  value="{{ $student['user']['email'] ?? '' }}">
+                                  value="{{ $student['user']['email'] ?? '' }}" readonly>
                         </div>
 
                         <div class="form-group col-md-6">
