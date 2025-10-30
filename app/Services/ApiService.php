@@ -301,4 +301,48 @@ class ApiService
             'data' => $response->json(),
         ];
     }
+    public function uploadAvatar($file)
+    {
+        try {
+            // Kiểm tra nếu không có file được truyền
+            if (!$file) {
+                return [
+                    'error' => true,
+                    'message' => 'Không có file được chọn để tải lên.'
+                ];
+            }
+
+            // Gửi request multipart/form-data
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->token,
+                'Accept' => 'application/json',
+            ])->attach(
+                'avatar',               // tên field trong API
+                file_get_contents($file->getRealPath()),
+                $file->getClientOriginalName()
+            )->post($this->baseUrl . '/users/upload-avatar');
+
+            // Kiểm tra phản hồi
+            if ($response->failed()) {
+                return [
+                    'error' => true,
+                    'message' => 'Upload thất bại. Mã lỗi: ' . $response->status(),
+                    'data' => $response->json(),
+                ];
+            }
+
+            // Thành công
+            return [
+                'error' => false,
+                'message' => $response->json('message') ?? 'Upload avatar thành công',
+                'avatar' => $response->json('avatar') ?? null,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'error' => true,
+                'message' => 'Lỗi khi upload avatar: ' . $e->getMessage(),
+            ];
+        }
+    }
+
 }

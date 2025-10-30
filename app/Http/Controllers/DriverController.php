@@ -27,20 +27,27 @@ class DriverController extends Controller{
             'ward' => 'required|string',
             'district' => 'required|string',
             'cccd' => 'nullable|string',
-            'mabanglai' => 'required|string'
+            'mabanglai' => 'required|string',
+            'avatar' => 'nullable|image|max:2048', // ✅ thêm validate cho ảnh
         ]);
 
         // --- 2️⃣ Ghép địa chỉ ---
         $fullAddress = "{$validated['address']}, {$validated['ward']}, {$validated['district']}, TP.HCM";
 
-        // --- 4️⃣ Xử lý ảnh đại diện (nếu có) ---
+        // --- 3️⃣ Upload avatar qua API nếu có ---
         $avatarUrl = null;
         if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $avatarUrl = asset('storage/' . $path);
+            $uploadResult = $api->uploadAvatar($request->file('avatar'));
+
+            if (!empty($uploadResult['error'])) {
+                return back()->withErrors(['error' => 'Không thể upload ảnh: ' . ($uploadResult['message'] ?? 'Lỗi không xác định.')]);
+            }
+
+            // ✅ Lấy link ảnh Cloudinary từ API
+            $avatarUrl = $uploadResult['avatar'] ?? null;
         }
 
-        // --- 5️⃣ Chuẩn bị dữ liệu gửi API ---
+        // --- 4️⃣ Chuẩn bị dữ liệu gửi API ---
         $body = [
             'email' => $validated['email'],
             'role' => 'tai_xe',
@@ -51,34 +58,31 @@ class DriverController extends Controller{
                 'sdt' => $validated['sdt'],
                 'diachi' => $fullAddress,
                 'cccd' => $validated['cccd'] ?? '',
-                'avatar' => $avatarUrl,
+                'avatar' => $avatarUrl, // ✅ gán link thực từ API
             ],
             'tai_xe_info' => [
                 'mabanglai' => $validated['mabanglai'],
             ],
         ];
 
-        // --- 6️⃣ Gọi API tạo học sinh ---
+        // --- 5️⃣ Gọi API tạo tài xế ---
         try {
-            $response = $api->createStudentAccount($body);
-            \Log::info('Response from createStudentAccount:', $response);
+            $response = $api->createStudentAccount($body); // ⚠️ tên hàm này vẫn là createStudentAccount
+            \Log::info('Response from createDriverAccount:', $response);
 
             if ($response['ok'] && isset($response['data']['message'])) {
-                // ✅ Thành công
                 return redirect()
                     ->route('driver-list.')
                     ->with('success', '✅ ' . $response['data']['message']);
             }
 
-            // ❌ Nếu thất bại
             $errorMsg = $response['data']['message'] ?? 'Không thể tạo tài xế. Vui lòng thử lại.';
             return back()->withErrors(['error' => '❌ ' . $errorMsg]);
-
         } catch (\Exception $e) {
-            // 🚨 Lỗi kết nối hoặc lỗi HTTP
             return back()->withErrors(['error' => '🚨 Lỗi API: ' . $e->getMessage()]);
         }
     }
+
     public function detail($id,ApiService $api){
         $student = $api->getStudentDetail($id);
         return view('users.drivers.driver-detail',compact('student'));

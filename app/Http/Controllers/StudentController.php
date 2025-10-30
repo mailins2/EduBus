@@ -38,19 +38,26 @@ class StudentController extends Controller
             'phu_huynh_sdt' => 'required|string',
             'quanhe' => 'required|string',
             'diadiem_don_tra' => 'nullable|string',
+            'avatar' => 'nullable|image|max:2048', // thêm validate cho avatar
         ]);
 
         // --- 2️⃣ Ghép địa chỉ ---
         $fullAddress = "{$validated['address']}, {$validated['ward']}, {$validated['district']}, TP.HCM";
 
-        // --- 4️⃣ Xử lý ảnh đại diện (nếu có) ---
+        // --- 3️⃣ Upload ảnh avatar qua API (nếu có) ---
         $avatarUrl = null;
         if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $avatarUrl = asset('storage/' . $path);
+            $uploadResult = $api->uploadAvatar($request->file('avatar'));
+
+            if (!empty($uploadResult['error'])) {
+                return back()->withErrors(['error' => 'Không thể upload ảnh: ' . ($uploadResult['message'] ?? 'Lỗi không xác định.')]);
+            }
+
+            // Lấy link ảnh từ API (Cloudinary)
+            $avatarUrl = $uploadResult['avatar'] ?? null;
         }
 
-        // --- 5️⃣ Chuẩn bị dữ liệu gửi API ---
+        // --- 4️⃣ Chuẩn bị dữ liệu gửi API ---
         $body = [
             'email' => $validated['email'],
             'role' => 'hoc_sinh',
@@ -61,7 +68,7 @@ class StudentController extends Controller
                 'sdt' => $validated['sdt'],
                 'diachi' => $fullAddress,
                 'cccd' => $validated['cccd'] ?? '',
-                'avatar' => $avatarUrl,
+                'avatar' => $avatarUrl, // ✅ dùng link thật từ Cloudinary
             ],
             'hoc_sinh_info' => [
                 'mahs' => $validated['mahs'],
@@ -77,27 +84,24 @@ class StudentController extends Controller
             ],
         ];
 
-        // --- 6️⃣ Gọi API tạo học sinh ---
+        // --- 5️⃣ Gọi API tạo học sinh ---
         try {
             $response = $api->createStudentAccount($body);
             \Log::info('Response from createStudentAccount:', $response);
 
             if ($response['ok'] && isset($response['data']['message'])) {
-                // ✅ Thành công
                 return redirect()
                     ->route('student-list.')
                     ->with('success', '✅ ' . $response['data']['message']);
             }
 
-            // ❌ Nếu thất bại
             $errorMsg = $response['data']['message'] ?? 'Không thể tạo học sinh. Vui lòng thử lại.';
             return back()->withErrors(['error' => '❌ ' . $errorMsg]);
-
         } catch (\Exception $e) {
-            // 🚨 Lỗi kết nối hoặc lỗi HTTP
             return back()->withErrors(['error' => '🚨 Lỗi API: ' . $e->getMessage()]);
         }
     }
+
     public function detail($id,ApiService $api){
         $student = $api->getStudentDetail($id);
         return view('users.students.student-detail',compact('student'));

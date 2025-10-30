@@ -15,7 +15,7 @@
     <div class="card shadow-lg p-4" style="width: 100%; border-radius: 20px;">
         <div class="text-center mb-4">
             <img
-                src="https://edubus.onrender.com/storage/avatars/nSFtoRmmm5KpfXJQR1IviWfjV0Ju8az7vPNmqIpQ.jpg"
+                src="{{ data_get($student, 'user.profile.avatar') ?: asset('assets/images/avatars/01.png') }}"
                 alt="Avatar"
                 class="rounded"
                 style="width:150px; height:150px; object-fit:cover;">
