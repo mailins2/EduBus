@@ -7,6 +7,7 @@ services:
       composer install --no-dev --optimize-autoloader
       php artisan key:generate
       php artisan migrate --force
-      php artisan storage:link
+      mkdir -p public/storage
+      cp -r storage/app/public/* public/storage/
     startCommand: |
       php artisan serve --host 0.0.0.0 --port $PORT
