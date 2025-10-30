@@ -246,8 +246,8 @@ function validateForm() {
       const year = new Date(dob).getFullYear();
       const currentYear = new Date().getFullYear();
       const age = currentYear - year;
-      if (age < 18) {
-         document.getElementById('error-dob').textContent = "Tuổi phải từ 18.";
+      if (age < 18 && age >65) {
+         document.getElementById('error-dob').textContent = "Tuổi phải từ 18 đến 65.";
          isValid = false;
       }
    }
@@ -258,7 +258,7 @@ function validateForm() {
    }
 
    if (phone && !phoneRegex.test(phone)) {
-      document.getElementById('error-phone').textContent = "SĐT học sinh sai định dạng.";
+      document.getElementById('error-phone').textContent = "SĐT sai định dạng.";
       isValid = false;
    }
 
