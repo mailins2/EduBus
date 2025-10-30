@@ -32,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('admin', $admin);
             }
         }
+        if (config('app.env') === 'production' && Request::server('HTTP_X_FORWARDED_PROTO') === 'https') {
+            URL::forceScheme('https');
+        }
     });
     }
 }
