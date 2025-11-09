@@ -11,10 +11,42 @@ class BusController extends Controller{
     {
         $this->apiService = $apiService;
     }
-    public function index(ApiService $api)
+    public function index(Request $request, ApiService $api)
     {
-        $buses = $api->getBuses();
-        return view('busline.bus-list', compact('buses'));
+        // Lấy dữ liệu từ API
+        $result = $api->getBuses();
+
+        // Nếu API lỗi → gửi view rỗng + thông báo lỗi
+        if (!empty($result['error']) && $result['error'] === true) {
+            return view('busline.bus-list', [
+                'buses' => [],
+                'pages' => 0,
+                'currentPage' => 1,
+                'message' => $result['message']
+            ]);
+        }
+
+        // Lấy danh sách user (luôn là array)
+        $buses = $result['dsXe'] ?? [];
+
+        // PHÂN TRANG
+        $perPage = 10;
+        $total = count($buses);
+        $pages = ceil($total / $perPage);
+
+        // Lấy page hiện tại
+        $currentPage = max(1, (int)$request->query('page', 1));
+
+        // Cắt dữ liệu theo trang
+        $offset = ($currentPage - 1) * $perPage;
+        $usersPage = array_slice($buses, $offset, $perPage);
+
+        return view('busline.bus-list', [
+            'buses' => $usersPage,       // chỉ gửi 10 bản ghi
+            'pages' => $pages,
+            'currentPage' => $currentPage,
+            'message' => $result['message'] ?? null
+        ]);
     }
     public function add(ApiService $api)
     {

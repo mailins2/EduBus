@@ -5,10 +5,42 @@ use App\Services\ApiService;
 use Illuminate\Http\Request;
 
 class DriverController extends Controller{
-    public function index(ApiService $api)
+    public function index(Request $request, ApiService $api)
     {
-        $users = $api->getDrivers();
-        return view('users.drivers.driver-list', compact('users'));
+        // Lấy dữ liệu từ API
+        $result = $api->getDrivers();
+
+        // Nếu API lỗi → gửi view rỗng + thông báo lỗi
+        if (!empty($result['error']) && $result['error'] === true) {
+            return view('users.drivers.drivers-list', [
+                'users' => [],
+                'pages' => 0,
+                'currentPage' => 1,
+                'message' => $result['message']
+            ]);
+        }
+
+        // Lấy danh sách user (luôn là array)
+        $users = $result['users'] ?? [];
+
+        // PHÂN TRANG
+        $perPage = 10;
+        $total = count($users);
+        $pages = ceil($total / $perPage);
+
+        // Lấy page hiện tại
+        $currentPage = max(1, (int)$request->query('page', 1));
+
+        // Cắt dữ liệu theo trang
+        $offset = ($currentPage - 1) * $perPage;
+        $usersPage = array_slice($users, $offset, $perPage);
+
+        return view('users.drivers.driver-list', [
+            'users' => $usersPage,       // chỉ gửi 10 bản ghi
+            'pages' => $pages,
+            'currentPage' => $currentPage,
+            'message' => $result['message'] ?? null
+        ]);
     }
     public function add()
     {

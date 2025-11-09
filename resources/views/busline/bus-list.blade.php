@@ -16,7 +16,7 @@
             </div>
             <div class="card-body px-0">
                <div class="table-responsive">
-                  @if(empty($buses['dsXe']))
+                  @if(empty($buses))
                   <div style="margin:auto">
                      <div style="display:flex;align-item:center;justify-content:center">
                         <img src="..\assets\images\error\emty.svg" width=50%> 
@@ -36,9 +36,9 @@
                         </tr>
                      </thead>
                      <tbody>
-                        @foreach($buses['dsXe'] as $index => $bus)
+                        @foreach($buses as $index => $bus)
                         <tr onclick="window.location='{{ route('bus-list.detail', $bus['_id']) }}'" style="cursor:pointer;">
-                           <td class="text-center">{{$index +1}}</td>
+                           <td class="text-center">{{($index +1)+(($currentPage-1)*10)}}</td>
                            <td>{{ $bus['bienso'] ?? 'chưa có'}}</td>
                            <td>{{ count($bus['hoc_sinh_ids']) ?? 'chưa có'}}/{{ $bus['suc_chua'] ?? 'chưa có'}}</td>
                            <td>{{ $bus['tuyen'] ?? 'chưa có'}}</td>
@@ -79,6 +79,35 @@
                         @endforeach
                      </tbody>
                   </table>
+                  <div class="d-flex justify-content-center align-item-center">
+                     <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                              {{-- Previous --}}
+                              <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
+                                 <a class="page-link" href="{{ $currentPage > 1 ? route('bus-list.', ['page' => $currentPage - 1]) : '#' }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                 </a>
+                              </li>
+
+                              {{-- Page numbers --}}
+                              @foreach(range(1, $pages) as $n)
+                                 <li class="page-item {{ $currentPage == $n ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ route('bus-list.', ['page' => $n]) }}">
+                                          {{ $n }}
+                                    </a>
+                                 </li>
+                              @endforeach
+
+                              {{-- Next --}}
+                              <li class="page-item {{ $currentPage == $pages ? 'disabled' : '' }}">
+                                 <a class="page-link" href="{{ $currentPage < $pages ? route('bus-list.', ['page' => $currentPage + 1]) : '#' }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                 </a>
+                              </li>
+
+                        </ul>
+                     </nav>
+                  </div>
                   @endif
                </div>
             </div>

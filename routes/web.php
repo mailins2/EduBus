@@ -33,7 +33,7 @@ Route::middleware([AuthSessionMiddleware::class])->group(function () {
         ->prefix('/student-list')
         ->name('student-list.')
         ->group(function () {
-            Route::get('/', 'index')->name('');
+            Route::get('/', 'index')->name('index');
             Route::get('/add-student', 'add')->name('add-student');
             Route::post('/store', 'store')->name('store'); 
             Route::get('/detail/{id}','detail')->name('detail');

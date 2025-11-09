@@ -36,7 +36,7 @@ class ApiService
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
-        ])->get($this->baseUrl . '/users?role=hoc_sinh&sort=asc');
+        ])->get($this->baseUrl . '/users?role=hoc_sinh&sort=desc');
 
         // Nếu request thất bại (API lỗi, 401, 500, ...)
         if (!$response->successful()) {
