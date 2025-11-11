@@ -124,7 +124,7 @@ class StudentController extends Controller
 
             if ($response['ok'] && isset($response['data']['message'])) {
                 return redirect()
-                    ->route('student-list.')
+                    ->route('student-list.index')
                     ->with('success', '✅ ' . $response['data']['message']);
             }
 
@@ -201,7 +201,7 @@ class StudentController extends Controller
 
             if ($response['ok']) {
                 return redirect()
-                    ->route('student-list.')
+                    ->route('student-list.index')
                     ->with('success', $response['data']['message'] ?? 'Cập nhật học sinh thành công!');
             } else {
                 $errorMessage = $response['data']['message'] ?? 'Không thể cập nhật học sinh.';
